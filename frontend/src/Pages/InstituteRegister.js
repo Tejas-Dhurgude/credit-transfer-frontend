@@ -74,6 +74,7 @@ const InstituteRegister = () => {
             >Submit</button>
         </div>
     </div>
+    
     </div>
    </>
   )
