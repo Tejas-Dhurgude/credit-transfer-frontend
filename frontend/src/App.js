@@ -12,7 +12,6 @@ import CreditDashboard from "./Pages/CreditDashboard";
 import Nad from "./Pages/Nad";
 import University from "./Pages/University";
 
-
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -45,12 +44,12 @@ const App = () => {
     },
     {
       path: "/nad",
-      element: <Nad />
+      element: <Nad />,
     },
     {
-      path:"/university",
-      element:<University/>
-    }
+      path: "/university",
+      element: <University />,
+    },
   ]);
   return (
     <>
