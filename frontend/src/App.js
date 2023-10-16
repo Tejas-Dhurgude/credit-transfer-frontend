@@ -11,6 +11,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreditDashboard from "./Pages/CreditDashboard";
 import Nad from "./Pages/Nad";
 import University from "./Pages/University";
+import UniversityApply from "./Pages/UniversityApply";
+import UploadMarksheet from "./Pages/UploadMarksheet";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -50,7 +52,16 @@ const App = () => {
       path: "/university",
       element: <University />,
     },
+    {
+      path:'/universityapply',
+      element:<UniversityApply/>
+    },
+    {
+      path:'/uploadmarksheet',
+      element:<UploadMarksheet/>
+    }
   ]);
+  
   return (
     <>
       <RouterProvider router={router} />
