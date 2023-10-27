@@ -6,6 +6,8 @@ import {
   StudentList,
   Universitylist,
   StudentLogin,
+  SheetList,
+  ViewMarksheet
 } from "./Pages";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreditDashboard from "./Pages/CreditDashboard";
@@ -59,6 +61,14 @@ const App = () => {
     {
       path:'/uploadmarksheet',
       element:<UploadMarksheet/>
+    },
+    {
+      path:'/sheetlist',
+      element:<SheetList/>
+    },
+    {
+      path:'/viewmarksheet',
+      element:<ViewMarksheet/>
     }
   ]);
   

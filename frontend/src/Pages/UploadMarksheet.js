@@ -1,25 +1,72 @@
 import React from "react";
 import "./upload_marksheet.css";
 import { Navbar } from "../components";
+import { useState } from "react";
+import { create } from 'ipfs-http-client';
+import {Buffer} from 'buffer';
+import {ethers} from 'ethers';
+import { FileHashABI,FileHashAddress } from "../utils/constants/constants_FileHash";
 
 const UploadMarksheet = () => {
+  const [studentUID, setStudentUID] = useState("");
+  const [instituteCode, setInstituteCode] = useState("");
+  const [file, setFile] = useState(null);
+
+  const submitHandler = async(e) => {
+    e.preventDefault();
+    const auth = 'Basic ' + Buffer.from('2VIoqwW3bEyMIFuuoZ9z9eZTdxj' + ':' + '2bc181af8d48b95b19e14854d564a881').toString('base64')
+    const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https', headers: { authorization: auth } })
+    const added = await client.add(file)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+      const signer = provider.getSigner();
+      const userContract = new ethers.Contract(FileHashAddress, FileHashABI, signer);
+      const gasLimit = 1000000;
+      const tx = await userContract.addFile(studentUID,instituteCode,added.path,{gasLimit:gasLimit});
+      console.log(tx);
+      alert('File Uploaded Successfully')
+  };
+
   return (
     <div>
       <Navbar/>
 
       <div className="container">
         <div className="wrapper">
-          <header>File Uploader JavaScript</header>
           <form action="#">
-            <input className="file-input" type="file" name="file" hidden />
-            <i className="fas fa-cloud-upload-alt"></i>
-            <p>Browse File to Upload</p>
+          <label className="text-xl font-semibold mr-2">
+              Student UID
+            </label>
+            <input
+              type="text"
+              className="border-2 border-black"
+              onChange={(e) => setStudentUID(e.target.value)}
+              />
+            <label className="text-xl font-semibold mr-2">
+              Institute Code:
+            </label>
+            <input
+              type="text"
+              className="border-2 border-black"
+              onChange={(e) => setInstituteCode(e.target.value)}
+              />
+              <label className="text-xl font-semibold mr-2">
+              File Upload
+            </label>
+            <input
+              type="file"
+              className="border-2 border-black"
+              onChange={(e) => setFile(e.target.files[0])}
+              />
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-2 rounded"
+              onClick={submitHandler}
+              >
+              Upload
+            </button>
           </form>
-          <section className="progress-area"></section>
-          <section className="uploaded-area"></section>
         </div>
       </div>
-      <script src="upload_marksheet.js"></script>
     </div>
   );
 };
