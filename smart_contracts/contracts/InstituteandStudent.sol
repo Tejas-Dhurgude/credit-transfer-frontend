@@ -9,6 +9,7 @@ contract InstituteandStudent{
         string password;
         address walletAddress;
         string [] instituteCode;
+        uint credits;
     }
     
     struct Institutes{
@@ -21,6 +22,43 @@ contract InstituteandStudent{
 
     Institutes[] i;
     Student[] s;
+    
+
+    //---------------
+
+
+    function addStudentCredit(string memory _uid, uint _credits) public {
+        for (uint j = 0; j < s.length; j++) {
+            if (keccak256(abi.encodePacked(s[j].uid)) == keccak256(abi.encodePacked(_uid))) {
+                s[j].credits += _credits;
+                return;
+            }
+        }
+    }
+
+    function getStudentCredit(string memory _uid) public view returns (uint) {
+        for (uint j = 0; j < s.length; j++) {
+            if (keccak256(abi.encodePacked(s[j].uid)) == keccak256(abi.encodePacked(_uid))) {
+                return s[j].credits;
+            }
+        }
+        return uint(0);
+    }
+
+    function getStudentInfo(string memory _uid) public view returns (string memory, string memory, address, string[] memory, uint ) {
+        for (uint j = 0; j < s.length; j++) {
+            if (keccak256(abi.encodePacked(s[j].uid)) == keccak256(abi.encodePacked(_uid))) {
+                return (s[j].name, s[j].password, s[j].walletAddress, s[j].instituteCode, s[j].credits);
+            }
+        }
+        return ("", "", address(0), new string[](0), 0);
+    }
+
+    
+
+    //----------------
+
+
 
     function getAllInstitutes () public view returns(Institutes[] memory){
         return i;
@@ -38,8 +76,7 @@ contract InstituteandStudent{
         for (uint j=0;j<s.length;j++){
             require(keccak256(abi.encodePacked(s[j].uid))!=keccak256(abi.encodePacked(_uid)), "Student already exists");
         }
-        s.push(Student(_name, _uid,_password, msg.sender, new string[](0)));
-
+        s.push(Student(_name, _uid,_password, msg.sender, new string[](0), 0));
     }
 
     function enrollStudent(string memory _uid, string memory _code) public{
