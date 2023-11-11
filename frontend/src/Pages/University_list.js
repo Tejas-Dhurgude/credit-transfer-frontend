@@ -20,6 +20,7 @@ export default function Universitylist() {
 
         
       } catch (error) {
+        console.log(error);
         alert("Check your credentials")
         
       }
