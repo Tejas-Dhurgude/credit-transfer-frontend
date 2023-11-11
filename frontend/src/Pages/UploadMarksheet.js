@@ -6,6 +6,9 @@ import { create } from 'ipfs-http-client';
 import {Buffer} from 'buffer';
 import {ethers} from 'ethers';
 import { FileHashABI,FileHashAddress } from "../utils/constants/constants_FileHash";
+import { InstituteandStudentABI,InstituteandStudentAddress } from '../utils/constants/constants_SI.js'
+import Papa from 'papaparse';
+
 
 const UploadMarksheet = () => {
   const [studentUID, setStudentUID] = useState("");
@@ -14,6 +17,57 @@ const UploadMarksheet = () => {
 
   const submitHandler = async(e) => {
     e.preventDefault();
+
+    const reader = new FileReader();
+    var _credits = 0;
+
+    reader.onload = async (event) => {
+      const fileData = event.target.result;
+
+      // Convert the CSV data to JSON using PapaParse
+      Papa.parse(fileData, {
+        header: true, // Assumes the first row contains headers
+        complete: (result) => {
+          // Log the JSON data
+          console.log(result.data);
+          
+
+        result.data.forEach((item) => {
+          if (item.credits) {
+            const single_credit = parseFloat(item.credits);
+            if (!isNaN(single_credit)) {
+              _credits += single_credit;
+            }
+          }
+          
+        });
+        console.log("total credits:", _credits);
+
+        }
+      });
+    };
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send('eth_requestAccounts', []);
+      const signer = provider.getSigner();
+      const userContract1 = new ethers.Contract(InstituteandStudentAddress, InstituteandStudentABI, signer);
+      const gasLimit = 1000000;
+
+      
+      const tx = await userContract1.addStudentCredit( studentUID, _credits,{gasLimit:gasLimit});
+      await tx.wait();
+      console.log(tx);
+      alert('Credits uploaded successfully')
+
+      
+    } catch (error) {
+      alert('Error in Registering Institute')
+    }
+    
+    reader.readAsText(file);
+
+    
     const auth = 'Basic ' + Buffer.from('2VIoqwW3bEyMIFuuoZ9z9eZTdxj' + ':' + '2bc181af8d48b95b19e14854d564a881').toString('base64')
     const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https', headers: { authorization: auth } })
     const added = await client.add(file)
