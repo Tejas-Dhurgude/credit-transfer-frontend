@@ -1,8 +1,67 @@
 import React from "react";
+import { useEffect,useState } from "react";
+
 import { Navbar } from "../components";
+import { ethers } from "ethers";
+import {
+  InstituteandStudentABI,
+  InstituteandStudentAddress,
+} from "../utils/constants/constants_SI.js";
 import img1 from "../images/profile.jpg";
 
 export default function CreditDashboard() {
+  const [studentDetails, setStudentDetails] = useState({
+    name: "data not fetched",
+    walletAddress: "",
+    instituteCode: [],
+    credit: 0,
+  });
+
+
+  
+  useEffect(() => {
+    const onSub = async () => {
+      var uid = 100 ; //to be taken from session later
+
+      
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userContract = new ethers.Contract(
+          InstituteandStudentAddress,
+          InstituteandStudentABI,
+          signer
+        );
+        const gasLimit = 1000000;
+        
+        const studentData = await userContract.getStudentInfo( uid, {
+          gasLimit: gasLimit,
+      });
+
+      // s[j].name, s[j].password, s[j].walletAddress, s[j].instituteCode, s[j].credits
+      
+      setStudentDetails({
+        name: studentData[0],
+        walletAddress: studentData[2],
+        instituteCode: studentData[3],
+        credit: studentData[4].toNumber(),
+      });
+      console.log(studentDetails);  
+      console.log(uid); 
+      } catch (error) {
+        console.error("Error fetching student information:", error);
+        alert("Unable to  show your Credits");
+      }
+
+      
+
+    };
+
+    onSub();
+  }, []);
+  
+
   return (
     <div className="bg-gradient-to-r from-yellow-200 to-yellow-100 min-h-screen">
       <Navbar />
@@ -16,12 +75,14 @@ export default function CreditDashboard() {
             />
           </div>
           <div>
-            <h2 className="text-3xl font-bold mb-2">Rohan Kadam</h2>
-            <p className="mb-2">University: Mumbai University</p>
-            <p>Wallet Address: 1234</p>
+            <h2 className="text-3xl font-bold mb-2">Name: {studentDetails.name}</h2>
+            <h2 className="text-3xl font-bold mb-2">Uid: </h2>
+            <p className="mb-2">Institute Codes: {studentDetails.instituteCode}</p>
+            <p className="mb-2">Wallet Address: {studentDetails.walletAddress}</p>
+            <p className="mb-2">Credit: {studentDetails.credit}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-xl text-black">
+        
+        {/* <div className="bg-white p-6 rounded-xl text-black">
           <div className="mb-4 text-3xl font-bold text-center">
             Credit Dashboard
           </div>
@@ -50,9 +111,10 @@ export default function CreditDashboard() {
                 <td className="text-center">4/4</td>
               </tr>
             </tbody>
-          </table>
+          </table>*/}
         </div>
-      </div>
+      </div>  
     </div>
   );
 }
+
