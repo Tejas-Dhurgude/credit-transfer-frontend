@@ -21,11 +21,10 @@ const UploadMarksheet = () => {
     const reader = new FileReader();
     var _credits = 0;
 
-    reader.onload = async (event) => {
-      const fileData = event.target.result;
+
 
       // Convert the CSV data to JSON using PapaParse
-      Papa.parse(fileData, {
+      Papa.parse(file, {
         header: true, // Assumes the first row contains headers
         complete: (result) => {
           // Log the JSON data
@@ -43,9 +42,10 @@ const UploadMarksheet = () => {
         });
         console.log("total credits:", _credits);
 
+
         }
       });
-    };
+   
 
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);

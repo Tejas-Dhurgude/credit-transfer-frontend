@@ -21,7 +21,7 @@ export default function CreditDashboard() {
   
   useEffect(() => {
     const onSub = async () => {
-      var uid = 100 ; //to be taken from session later
+      var uid = "2021700026" ; //to be taken from session later
 
       
       try {
@@ -39,6 +39,8 @@ export default function CreditDashboard() {
           gasLimit: gasLimit,
       });
 
+      console.log(studentData);
+
       // s[j].name, s[j].password, s[j].walletAddress, s[j].instituteCode, s[j].credits
       
       setStudentDetails({
@@ -47,8 +49,6 @@ export default function CreditDashboard() {
         instituteCode: studentData[3],
         credit: studentData[4].toNumber(),
       });
-      console.log(studentDetails);  
-      console.log(uid); 
       } catch (error) {
         console.error("Error fetching student information:", error);
         alert("Unable to  show your Credits");
@@ -77,7 +77,6 @@ export default function CreditDashboard() {
           <div>
             <h2 className="text-3xl font-bold mb-2">Name: {studentDetails.name}</h2>
             <h2 className="text-3xl font-bold mb-2">Uid: </h2>
-            <p className="mb-2">Institute Codes: {studentDetails.instituteCode}</p>
             <p className="mb-2">Wallet Address: {studentDetails.walletAddress}</p>
             <p className="mb-2">Credit: {studentDetails.credit}</p>
           </div>
