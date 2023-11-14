@@ -18,7 +18,13 @@ export default function InstituteLogin() {
       const gasLimit = 1000000;
       const tx = await userContract.loginUniversity(code,password,{gasLimit:gasLimit});
       console.log(tx);
-      alert('Logged in Successfully')
+      if (tx[0]===""){
+        alert("Check your credentials")
+      }
+      else{
+        localStorage.setItem("code", code)
+        window.location.href = "/uploadmarksheet";
+      }
       
     } catch (error) {
       alert("Check your credentials")

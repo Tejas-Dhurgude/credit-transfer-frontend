@@ -26,7 +26,13 @@ export default function StudentLogin() {
         gasLimit: gasLimit,
       });
       console.log(tx);
-      alert("Logged in Successfully");
+      if (tx[0]===""){
+        alert("Check your credentials");
+      }
+      else{
+        localStorage.setItem("uid", uid)
+        window.location.href = "/creditdashboard";
+      }
     } catch (error) {
       alert("Check your credentials");
     }

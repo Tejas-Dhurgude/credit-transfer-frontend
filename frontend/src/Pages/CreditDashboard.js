@@ -21,7 +21,8 @@ export default function CreditDashboard() {
   
   useEffect(() => {
     const onSub = async () => {
-      var uid = "2021700026" ; //to be taken from session later
+
+      var uid = localStorage.getItem("uid");
 
       
       try {
@@ -76,7 +77,7 @@ export default function CreditDashboard() {
           </div>
           <div>
             <h2 className="text-3xl font-bold mb-2">Name: {studentDetails.name}</h2>
-            <h2 className="text-3xl font-bold mb-2">Uid: </h2>
+            <h2 className="text-3xl font-bold mb-2">Uid: {localStorage.getItem("uid")} </h2>
             <p className="mb-2">Wallet Address: {studentDetails.walletAddress}</p>
             <p className="mb-2">Credit: {studentDetails.credit}</p>
           </div>

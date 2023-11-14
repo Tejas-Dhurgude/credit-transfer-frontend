@@ -14,6 +14,7 @@ const UploadMarksheet = () => {
   const [studentUID, setStudentUID] = useState("");
   const [instituteCode, setInstituteCode] = useState("");
   const [file, setFile] = useState(null);
+  const [insttituePassword, setInstitutePassword] = useState("");
 
   const submitHandler = async(e) => {
     e.preventDefault();
@@ -104,12 +105,20 @@ const UploadMarksheet = () => {
               className="border-2 border-black"
               onChange={(e) => setInstituteCode(e.target.value)}
               />
+            <label className="text-xl font-semibold mr-2">
+              Institute Password:
+            </label>
+            <input
+              type="text"
+              className="border-2 border-black"
+              onChange={(e) => setInstitutePassword(e.target.value)}
+              />
               <label className="text-xl font-semibold mr-2">
               File Upload
             </label>
             <input
               type="file"
-              className="border-2 border-black"
+              className=""
               onChange={(e) => setFile(e.target.files[0])}
               />
             <button
