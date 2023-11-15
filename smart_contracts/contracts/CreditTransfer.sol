@@ -34,6 +34,21 @@ contract CreditTransfer {
         );
     }
 
+    function pushTransferRequest( address _studentABCId , address _collegeId, address _foreignCollegeId, uint _credits) public {
+
+        transferRequests.push(
+            TransferDetails({
+                studentABCId: _studentABCId ,
+                collegeId: _collegeId,
+                foreignCollegeId: _foreignCollegeId,
+                hasStudentApproved: true,
+                hasCollegeApproved: false,
+                hasNADApproved: false,
+                presentCredit: _credits
+            })
+        );
+    }
+
     function foreignCollegeApproval(address studentId,uint requiredCredit) public {
         for (uint i = 0; i < transferRequests.length; i++) {
             if (transferRequests[i].studentABCId == studentId) {
