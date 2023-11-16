@@ -2,21 +2,57 @@ import React, { useState } from "react";
 import { Navbar } from "../components";
 import img2 from "../images/myProfile.jpg";
 import img3 from "../images/searchButton.png";
+import { ethers } from "ethers";
+import {
+  InstituteandStudentABI,
+  InstituteandStudentAddress,
+} from "../utils/constants/constants_SI.js";
 
 export default function UniversityApply() {
   const [search, setSearch] = useState("");
   const names = [
-    "Harvard",
-    "MIT",
-    "Stanford University",
-    "University of Cambridge",
-    "California Institute of Technology (Caltech)",
-    "University of Oxford"
+    "Other Univeristy",
+    "Other Univeristy 2",
   ];
+
+  const creditsRequired = [
+    6,
+    10,
+  ]
 
   const filteredUniversities = names.filter(university =>
     university.toLowerCase().includes(search.toLowerCase())
   );
+
+  const onApply = async (e,credits,university) => {
+    e.preventDefault();
+    console.log(credits);
+    const uid = localStorage.getItem("uid");
+    console.log(uid);
+    const institueCode = "SPITMUM"
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userContract = new ethers.Contract(
+          InstituteandStudentAddress,
+          InstituteandStudentABI,
+          signer
+        );
+        const gasLimit = 1000000;
+    const scredits  = await userContract.getStudentCredits(uid,{gasLimit});
+    if (parseInt(scredits) < credits){
+      alert("You don't have enough credits to apply for this university");
+      return;
+    }
+    else{
+      const tx = await userContract.sendTransferRequest(uid,institueCode,university,credits,{gasLimit});
+      await tx.wait();
+      alert("Your request has been sent !");
+      window.location.href = "/NAD"
+    }
+
+
+  }
 
   return (
     <div>
@@ -33,12 +69,6 @@ export default function UniversityApply() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-            </div>
-            <div className="flex m-[5%] gap-4">
-              <img src={img2} alt="My Profile" width="40px" height="40px" />
-              <a className="account" href="">
-                My Account
-              </a>
             </div>
           </div>
 
@@ -62,7 +92,9 @@ export default function UniversityApply() {
                       <span className="tag text-blue-600">Masters</span>
                     </div>
                     <div className="text-gray-700">
-                      <span>4.5</span>
+                      <span>Credits Required: {
+                        creditsRequired[index]
+                        }</span>
                       <i className="fa fa-star text-yellow-500"></i>
                     </div>
                   </div>
@@ -72,7 +104,9 @@ export default function UniversityApply() {
                     sodales morbi dignissim sed diam pharetra vitae ipsum odio.
                   </p>
                   <div className="mt-4">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                    onClick={(e) => onApply(e,creditsRequired[index],university)}
+                    >
                       Apply
                     </button>
                   </div>

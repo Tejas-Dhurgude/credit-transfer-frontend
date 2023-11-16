@@ -80,7 +80,17 @@ export default function CreditDashboard() {
             <h2 className="text-3xl font-bold mb-2">Uid: {localStorage.getItem("uid")} </h2>
             <p className="mb-2">Wallet Address: {studentDetails.walletAddress}</p>
             <p className="mb-2">Credit: {studentDetails.credit}</p>
+            {/* button */}
+
+            <div className="flex justify-center">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <a href="/universityapply">Apply for university</a>
+              </button>
           </div>
+
+          </div>
+
+          
         
         {/* <div className="bg-white p-6 rounded-xl text-black">
           <div className="mb-4 text-3xl font-bold text-center">

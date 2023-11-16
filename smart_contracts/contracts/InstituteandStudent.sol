@@ -19,9 +19,20 @@ contract InstituteandStudent{
         address walletAddress ;
         string [] studentUIDs;
     }
+    
+    struct TransferRequest{
+        string studentUID;
+        string instituteCode;
+        string otherinstituteCode;
+        uint credits;
+        bool hasStudentApproved;
+        bool hasCollegeApproved;
+        bool hasNADApproved;
+    }
 
     Institutes[] i;
     Student[] s;
+    TransferRequest[] t;
     
 
     //---------------
@@ -174,6 +185,88 @@ contract InstituteandStudent{
         return address(0);
     }
 
+
+    function sendTransferRequest(
+        string memory _studentUID,
+        string memory _instituteCode,
+        string memory _otherinstituteCode,
+        uint _credits
+    ) public {
+        t.push(
+            TransferRequest({
+                studentUID: _studentUID,
+                instituteCode: _instituteCode,
+                otherinstituteCode: _otherinstituteCode,
+                credits: _credits,
+                hasStudentApproved: true,
+                hasCollegeApproved: false,
+                hasNADApproved: false
+            })
+        );
+    }
+
+
+    function getStudentCredits(string memory _studentUID) public view returns (uint) {
+        for (uint256 j = 0; j < s.length; j++) {
+            if (keccak256(abi.encodePacked(s[j].uid)) == keccak256(abi.encodePacked(_studentUID))) {
+                return s[j].credits;
+            }
+        }
+        return uint(0);
+    }
+
+
+    function getInsituteApproval(string memory _studentUID, string memory _instituteCode) public {
+        for (uint256 j = 0; j < t.length; j++) {
+            if (
+                keccak256(abi.encodePacked(t[j].studentUID)) == keccak256(abi.encodePacked(_studentUID)) &&
+                keccak256(abi.encodePacked(t[j].instituteCode)) == keccak256(abi.encodePacked(_instituteCode))
+            ) {
+                t[j].hasCollegeApproved = true;
+            }
+        }
+
+    }
+
+    function getNADApproval(string memory _studentUID) public {
+        for (uint256 j = 0; j < t.length; j++) {
+            if (keccak256(abi.encodePacked(t[j].studentUID)) == keccak256(abi.encodePacked(_studentUID))) {
+                t[j].hasNADApproved = true;
+            }
+        }
+    }
+
+
+    function transferCredits(string memory _studentUID) public {
+        for (uint256 j = 0; j < t.length; j++) {
+            if (keccak256(abi.encodePacked(t[j].studentUID)) == keccak256(abi.encodePacked(_studentUID))) {
+                if (t[j].hasCollegeApproved == true && t[j].hasNADApproved == true) {
+                    for (uint256 k = 0; k < s.length; k++) {
+                        if (keccak256(abi.encodePacked(s[k].uid)) == keccak256(abi.encodePacked(_studentUID))) {
+                            s[k].credits -= t[j].credits;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    function getTransferReqeuests () public view returns(TransferRequest[] memory){
+        return t;
+    }
+
+    function getRequestbyinstitueID (string memory _instituteCode) public view returns(TransferRequest[] memory){
+        TransferRequest[] memory req = new TransferRequest[](t.length);
+        uint count = 0;
+        for(uint j=0; j<t.length; j++){
+            if(keccak256(abi.encodePacked(t[j].instituteCode)) == keccak256(abi.encodePacked(_instituteCode))){
+                req[count] = t[j];
+                count++;
+            }
+        }
+        return req;
+    } 
   
 
 

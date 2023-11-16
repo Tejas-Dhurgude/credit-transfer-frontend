@@ -2,6 +2,6 @@ import abi from "../contracts/InstituteandStudent.json"
 
 const InstituteandStudentABI = abi.abi;
 
-const InstituteandStudentAddress = "0xfc7D01CCe1Dd8a49A382259E3dc4DC89065CB045";
+const InstituteandStudentAddress = "0x302fa7e178558276F4c01485d01075F486C983bB";
 
 export { InstituteandStudentABI, InstituteandStudentAddress };
